@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+coverage/
+.angular/
+apps/web/.angular/
+apps/api/dist/
+apps/web/dist/
+*.db
+*.sqlite
+**/.gitkeep
