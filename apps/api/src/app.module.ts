@@ -14,12 +14,24 @@ import { Submission } from './submissions/submission.entity';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'better-sqlite3',
-        database: configService.get<string>('DATABASE_URL', 'data/coach.db'),
-        entities: [Challenge, Submission],
-        synchronize: true,
-      }),
+      useFactory: (configService: ConfigService) => {
+        const dbType = configService.get<string>('DATABASE_TYPE', 'better-sqlite3');
+        if (dbType === 'postgres') {
+          return {
+            type: 'postgres',
+            url: configService.get<string>('DATABASE_URL'),
+            entities: [Challenge, Submission],
+            synchronize: true,
+            ssl: { rejectUnauthorized: false },
+          };
+        }
+        return {
+          type: 'better-sqlite3',
+          database: configService.get<string>('DATABASE_URL', 'data/coach.db'),
+          entities: [Challenge, Submission],
+          synchronize: true,
+        };
+      },
     }),
     TypeOrmModule.forFeature([Challenge, Submission]),
     ChallengesModule,
